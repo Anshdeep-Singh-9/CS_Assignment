@@ -1,0 +1,13 @@
+{
+  "name": "cmdi-demo",
+  "version": "1.0.0",
+  "description": "In-band OS command injection demo (vulnerable + mitigated) for IT-30001 assignment",
+  "main": "vulnerable_server.js",
+  "scripts": {
+    "vulnerable": "node vulnerable_server.js",
+    "mitigated": "node mitigated_server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
