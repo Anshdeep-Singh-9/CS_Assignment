@@ -1,55 +1,59 @@
-# Signal & Story — Stored XSS Lab
+# Stored XSS Demonstration
 
-A locally run message board for demonstrating one vulnerability category: **stored cross-site scripting (stored XSS)**. The two routes share one original app and visual design, while keeping their saved notes separate:
+This project is a small Flask message board that demonstrates stored cross-site scripting (XSS) and an output-encoding mitigation. It provides two routes in the same application:
 
-- `/vulnerable` renders saved message markup unsafely.
-- `/fixed` renders saved messages with Jinja's normal HTML auto-escaping.
+- `/vulnerable` displays saved messages as HTML.
+- `/fixed` displays saved messages as text using Jinja's automatic HTML escaping.
 
-## Run locally
+Each route stores its messages separately in a local SQLite database.
 
-Python 3.10 or newer is recommended.
+## Requirements
+
+- Python 3.10 or newer
+- pip
+
+## Run the application
+
+Create and activate a virtual environment, then install the dependency:
 
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
+# Linux/macOS: source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python app.py
 ```
 
-Open <http://127.0.0.1:5002>. The server binds only to the local computer. Keep the vulnerable route local; do not deploy it or test it against another system.
+Open <http://127.0.0.1:5002>. The development server listens on the local computer only.
 
 ## Demonstration
 
-1. Open `http://127.0.0.1:5002/vulnerable`.
-2. Enter `Student` as the name and this harmless proof payload as the message:
+On `/vulnerable`, submit the following harmless message:
 
-   ```html
-   <script>alert("Stored XSS demo")</script>
-   ```
+```html
+<script>alert("Stored XSS demo")</script>
+```
 
-3. Publish the note. The page reloads and the browser shows the alert because the saved message is emitted as raw HTML. Dismiss it; the saved note remains and the alert appears again on reload.
-4. Open `http://127.0.0.1:5002/fixed`, submit the same message, and publish it. The text appears literally and no alert runs.
-5. Use **Clear this demo board** on each route to remove its entries.
+After publishing, the message is saved and rendered as raw HTML. The browser executes the script and displays an alert. The message remains stored, so it runs again when the page is loaded.
 
-The alert is a harmless execution proof. Do not use payloads that access cookies, send data elsewhere, or affect other users.
+Submit the same message on `/fixed`. It is saved, but Jinja escapes the HTML characters during rendering. The browser displays the message as text and does not execute it. The **Clear this demo board** control removes saved messages from the current route.
 
-## What the code demonstrates
+## Implementation
 
-- **Flaw:** `templates/board.html` uses `{{ entry['message'] | safe }}` on the vulnerable route. The `safe` marker disables the template engine's normal HTML escaping.
-- **Storage:** `app.py` saves the submitted message in SQLite, then retrieves it when that board is opened. The issue occurs when it is rendered, not when it is stored.
-- **Root cause:** untrusted, persistent text is treated as trusted HTML. The browser parses it as markup and executes the script element.
-- **Implemented mitigation:** on `/fixed`, the value is output as a normal Jinja variable, so Jinja encodes HTML-significant characters at render time. The browser receives text rather than executable markup.
+The `/publish` route in `app.py` receives a name and message and stores them in SQLite. When a board is loaded, the app retrieves its saved entries and passes them to `templates/board.html`.
 
-## Other XSS defenses to explain
+In the template, the vulnerable branch renders the message with `| safe`. This disables Jinja's automatic escaping and causes the browser to interpret submitted markup. The fixed branch renders the message as an ordinary template variable, so Jinja encodes HTML-significant characters before returning the page.
 
-- **Context-aware output encoding:** encode untrusted values for the exact output context (HTML text, attributes, URLs, or JavaScript). It prevents input from changing the surrounding syntax. This demo implements HTML-text encoding through Jinja auto-escaping.
-- **Framework auto-escaping:** templates encode variables by default, reducing the chance that a developer forgets. Avoid bypass features such as `safe` for user content.
-- **HTML sanitization for rich text:** when a product must allow selected formatting, a maintained sanitizer can parse the HTML and retain only an explicitly allowed subset.
-- **Content Security Policy (CSP):** a restrictive browser policy can limit which scripts may run, providing a backup layer if markup injection occurs.
-- **HttpOnly cookies:** prevents JavaScript from reading session cookies; it limits one possible impact but does not prevent XSS itself.
-- **Safe DOM sinks:** use `textContent` instead of `innerHTML` when inserting text through client-side JavaScript.
+The root cause is treating untrusted, persistent input as trusted HTML. The implemented mitigation is context-appropriate output encoding through Jinja's automatic escaping.
 
-## Assignment evidence to prepare
+## Additional XSS defenses
 
-For your individual portion, capture the vulnerable and fixed routes using the same harmless payload, explain the code path and root cause, identify output encoding as your implemented mitigation, and describe the other defenses above. Add your name and roll number to your group's ownership table and narrate your own video segment. Integrate this module into the group's repository when your team is ready. Follow the course instructions for the separate PDF and submission location.
+- **Framework auto-escaping:** escape template variables by default and avoid bypasses such as `safe` for untrusted content.
+- **HTML sanitization:** if user-authored rich HTML is required, use a maintained sanitizer with a restrictive allow-list.
+- **Content Security Policy (CSP):** restrict which scripts the browser can execute as an additional layer of defense.
+- **HttpOnly cookies:** prevent JavaScript from reading session cookies; this limits one possible impact but does not prevent XSS itself.
+- **Safe DOM sinks:** use APIs such as `textContent` to insert plain text instead of parsing it with `innerHTML`.
+
+## Local-use note
+
+The vulnerable route is intentionally unsafe for demonstration. Run it only on localhost with dummy data; do not deploy it or use it to test other systems.
