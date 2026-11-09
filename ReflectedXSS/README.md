@@ -98,10 +98,5 @@ ReflectedXSS/
 │   ├── parent.js            # Navigation, toggles, replay
 │   └── lab.js               # Safe frame navigation sync
 ├── tests/test_app.py        # Unit/integration tests
-├── evidence/README.md      # Screenshot instructions
-└── VIVA_NOTES.md            # 2-minute narration and Q&A
+└── evidence/README.md      # Screenshot instructions
 ```
-
-## Academic integrity
-
-The source and user interface here are an independent project, not a clone or an iframe of Google's servers. The conceptual inspiration is [Google XSS Game Level 1](https://xss-game.appspot.com/level1). **You should personally understand, adapt, and defend your own work in the individual viva**, as the assignment requires.
