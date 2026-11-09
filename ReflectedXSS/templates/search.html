@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Findly — Local Search Demo</title>
+<link rel="stylesheet" href="/static/style.css"><script defer src="/static/lab.js"></script>
+</head>
+<body class="search-page">
+<header class="search-head"><span>FINDLY / TRAINING SEARCH ENGINE</span><span>MODE: $MODE</span></header>
+<main class="search-main">
+  <h1 class="wordmark">findly<span>.</span></h1>
+  <p class="search-intro">Every search starts somewhere.</p>
+  <form method="get" action="/lab/$MODE">
+    <label class="sr-only" for="query">Search query</label>
+    <div class="search-bar"><span class="glass">⌕</span><input id="query" type="search" name="query" value="$INPUT_VALUE" autocomplete="off" placeholder="Enter search query..."><button type="submit">Search →</button></div>
+  </form>
+  <div class="results">$RESULT_HTML</div>
+</main>
+<footer class="search-foot">Original mock search engine · Local academic demonstration</footer>
+</body>
+</html>

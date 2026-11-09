@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reflected XSS — Security Lab</title>
+<link rel="stylesheet" href="/static/style.css"><script defer src="/static/parent.js"></script>
+</head>
+<body class="shell">
+<header class="masthead"><div class="logo">&lt;/&gt;</div><div><strong>SECURITY<span>LAB</span></strong><small>CYBER SECURITY · IT-30001</small></div><div class="live">● LOCAL TRAINING ENVIRONMENT</div></header>
+<main class="wrap">
+ <p class="breadcrumb">ASSIGNMENTS / WEB SERVER SECURITY / REFLECTED XSS</p>
+ <div class="hero"><div><p class="eyebrow">LAB 01 / CROSS-SITE SCRIPTING</p><h1>Reflected <em>XSS</em> <span>Playground.</span></h1><p class="lede">See how unsafe reflection becomes JavaScript execution — then block it with output encoding.</p></div><div class="owner"><small>IMPLEMENTED BY</small><strong>Aryan Saini</strong><span>IIT2024008 · Reflected XSS</span></div></div>
+ <section class="mission"><div class="mission-label">01 — MISSION BRIEF</div><div class="mission-cols"><div><h2>Find the injection point</h2><p>Submit a <code>query</code> using the embedded search field or address bar. Your request reaches a local Python web server.</p></div><div><h2>Prove and then block XSS</h2><p>Trigger a JavaScript <code>alert()</code> in <b>Vulnerable</b> mode. Submit the identical payload in <b>Secured</b> mode and compare.</p></div></div></section>
+ <div class="workspace"><div><h2>Live test environment</h2><p>One input · Two server-side responses</p></div><div class="tabs" role="group" aria-label="Select security mode"><button type="button" id="mode-vulnerable" class="tab active" aria-pressed="true">● VULNERABLE</button><button type="button" id="mode-secure" class="tab" aria-pressed="false">◈ SECURED</button></div></div>
+ <section class="browser" aria-label="Sandboxed test browser">
+  <div class="chrome"><div class="traffic"><i></i><i></i><i></i></div><span class="browser-tab">⌕ &nbsp; Findly — Search</span></div>
+  <div class="address"><span>⌕</span><label class="sr-only" for="address">Test URL</label><input id="address" spellcheck="false" autocomplete="off"><button id="go" type="button">Go ↗</button></div>
+  <iframe id="target" title="Isolated local search engine" src="/lab/vulnerable" sandbox="allow-scripts allow-forms allow-modals"></iframe>
+  <div class="browser-foot"><span>● &nbsp; <b id="mode-caption">INSECURE OUTPUT PATH</b></span><span>127.0.0.1 / SANDBOXED</span></div>
+ </section>
+ <div class="payload-box"><div><small>EXPLOIT PAYLOAD</small><code id="payload-label">&lt;script&gt;alert('Reflected XSS')&lt;/script&gt;</code></div><div class="buttons"><button type="button" class="primary" id="run-payload">▶ Run payload</button><button type="button" class="secondary" id="reset">↺ Reset</button><button type="button" class="secondary" id="copy-link">Copy URL</button></div></div>
+ <p class="feedback" id="feedback" aria-live="polite">Select “Run payload” in vulnerable mode to start the demonstration.</p>
+ <div class="cards"><article class="card bad"><small>THE ROOT CAUSE</small><h3>Unsafe HTML reflection</h3><p>The server inserts attacker-controlled GET input into the HTML response without encoding.</p><pre><code>if mode == 'vulnerable':
+    reflected = query  # UNSAFE</code></pre></article><article class="card good"><small>THE ONE IMPLEMENTED FIX</small><h3>HTML output encoding</h3><p>Escaping HTML-sensitive characters makes script tags display as ordinary text instead of executing.</p><pre><code>if mode == 'secure':
+    reflected = html.escape(
+        query, quote=True)  # SAFE</code></pre></article></div>
+ <footer class="foot"><span>LOCAL EDUCATIONAL DEMO · NOT FOR PUBLIC DEPLOYMENT</span><span>Concept inspired by Google XSS Game Level 1 · Original code</span></footer>
+</main>
+</body>
+</html>
