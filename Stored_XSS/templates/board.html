@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'Exposed' if vulnerable else 'Protected' }} board — Signal &amp; Story</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="board-page {{ 'unsafe-page' if vulnerable else 'safe-page' }}">
+  <header class="topbar">
+    <a class="wordmark" href="{{ url_for('home') }}">S<span>•</span>S <small>FIELD NOTES</small></a>
+    <a class="back-link" href="{{ url_for('home') }}">← LAB OVERVIEW</a>
+  </header>
+  <main class="board-shell">
+    <div class="board-kicker">MESSAGE WALL / {{ '01' if vulnerable else '02' }}</div>
+    <section class="board-intro">
+      <div>
+        <p class="status-label">{{ 'VULNERABLE DEMO' if vulnerable else 'MITIGATION ACTIVE' }}</p>
+        <h1>{{ 'Unfiltered' if vulnerable else 'Text-only' }}<br><em>messages.</em></h1>
+      </div>
+      <p class="intro-copy">
+        {% if vulnerable %}
+          In this route, saved message text is rendered as HTML. Use the harmless popup example from the lab instructions.
+        {% else %}
+          This route uses the template engine’s normal HTML escaping. The same input should be visible as text, not run.
+        {% endif %}
+      </p>
+    </section>
+
+    <section class="composer">
+      <div class="section-heading"><span>LEAVE A FIELD NOTE</span><span>MAX 500 CHARACTERS</span></div>
+      <form method="post" action="{{ url_for('publish', mode=mode) }}">
+        <label for="author">NAME</label>
+        <input id="author" name="author" maxlength="50" placeholder="Your demo name" required>
+        <label for="message">MESSAGE</label>
+        <textarea id="message" name="message" maxlength="500" rows="3" placeholder="Write a note, then publish it…" required></textarea>
+        <div class="form-footer">
+          <span>Saved notes remain here until you clear this board.</span>
+          <button type="submit">Publish note <b>↗</b></button>
+        </div>
+      </form>
+    </section>
+
+    <section class="notes-area">
+      <div class="section-heading"><span>RECENT NOTES</span><span>{{ '%02d'|format(entries|length) }} SAVED</span></div>
+      {% if entries %}
+        <div class="notes-list">
+          {% for entry in entries %}
+            <article class="note-card">
+              <div class="note-index">NOTE {{ '%02d'|format(loop.index) }}</div>
+              <div class="note-content">
+                <h2>{{ entry['author'] }}</h2>
+                <p class="note-message">
+                  {% if vulnerable %}
+                    {{ entry['message'] | safe }}
+                  {% else %}
+                    {{ entry['message'] }}
+                  {% endif %}
+                </p>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state"><span>✳</span><p>No notes yet. Publish one above to begin the demonstration.</p></div>
+      {% endif %}
+      <form class="clear-form" method="post" action="{{ url_for('clear_board', mode=mode) }}">
+        <button type="submit">Clear this demo board</button>
+      </form>
+    </section>
+    <aside class="explain-card">
+      <span>WHAT TO NOTICE</span>
+      <p>{{ 'This page trusts saved message markup. The browser interprets it when the note is rendered.' if vulnerable else 'The browser receives encoded characters, so the saved message is shown literally.' }}</p>
+    </aside>
+    <footer class="board-footer">SIGNAL &amp; STORY <span>·</span> LOCAL TRAINING APP · NO REAL USER DATA</footer>
+  </main>
+</body>
+</html>

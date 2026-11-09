@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal &amp; Story — Security Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="landing">
+    <div class="eyebrow">WEB SECURITY · LOCAL LEARNING LAB</div>
+    <div class="hero-mark" aria-hidden="true">S<span>•</span></div>
+    <h1>Signal <em>&amp;</em> Story</h1>
+    <p class="lede">A tiny message board for seeing how saved text can become browser code—and how safe rendering stops it.</p>
+    <div class="choice-grid">
+      <a class="choice choice-risk" href="{{ url_for('show_board', mode='vulnerable') }}">
+        <span class="choice-tag">01 / UNSAFE RENDERING</span>
+        <strong>Open the exposed board <b>↗</b></strong>
+        <span>Saved messages are inserted as HTML in this teaching route.</span>
+      </a>
+      <a class="choice choice-safe" href="{{ url_for('show_board', mode='fixed') }}">
+        <span class="choice-tag">02 / OUTPUT ENCODING</span>
+        <strong>Open the protected board <b>↗</b></strong>
+        <span>The same kind of saved message is displayed as ordinary text.</span>
+      </a>
+    </div>
+    <p class="local-note"><span></span> LOCALHOST ONLY · Use harmless demo input · Never deploy the vulnerable route</p>
+    <footer>STORED XSS · DEMONSTRATE → UNDERSTAND → DEFEND</footer>
+  </main>
+</body>
+</html>
