@@ -1,0 +1,23 @@
+{
+  "name": "csrf-assignment-react",
+  "version": "1.0.0",
+  "description": "POST-Based CSRF Attack and Mitigation Demonstration Using React.js and Express",
+  "main": "run-all.js",
+  "scripts": {
+    "start": "node run-all.js",
+    "start:all": "node run-all.js",
+    "start:backend": "cd backend && npm start",
+    "start:banking": "cd banking-app && npm run dev",
+    "start:shopping": "cd shopping-app && npm run dev"
+  },
+  "keywords": [
+    "csrf",
+    "react",
+    "cyber-security",
+    "synchronizer-token",
+    "vite",
+    "express"
+  ],
+  "author": "Cyber Security Lab Student",
+  "license": "ISC"
+}
